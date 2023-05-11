@@ -5,13 +5,13 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <stdio.h>
+# include <sys/time.h>
 
 # define UINT_MAX_STR "4294967295"
 
 typedef struct	s_philo
 {
 	unsigned int	total;
-	unsigned int	n;
 	unsigned int	ttd;
 	unsigned int	tte;
 	unsigned int	tts;
@@ -23,8 +23,18 @@ typedef struct s_arg
 	unsigned int	n;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*term;
+	int				*is_dead;
 	t_philo			vars;
 }	t_arg;
+
+typedef struct s_ttd_mutex
+{
+	unsigned int	ttd;
+	pthread_mutex_t	mutex;
+	int				*is_dead;
+	pthread_mutex_t	*term;
+	unsigned int	n;
+}	t_ttd_mutex;
 
 int				ft_strcmp(const char *s1, const char *s2);
 unsigned int	ft_atoi(const char *nptr);

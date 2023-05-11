@@ -32,7 +32,6 @@ int	is_args(int argc, char const *argv[], t_philo *vars)
 {
 	if (argc > 6 || argc < 5 || !is_valid_args(argc, argv))
 		return (0);
-	vars->n = 0;
 	vars->total = ft_atoi(argv[1]);
 	vars->ttd = ft_atoi(argv[2]);
 	vars->tte = ft_atoi(argv[3]);
