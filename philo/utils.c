@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bburguie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/12 19:11:16 by bburguie          #+#    #+#             */
+/*   Updated: 2023/05/12 19:11:17 by bburguie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	int	i;
@@ -41,4 +55,20 @@ unsigned int	ft_atoi(const char *nptr)
 	while (str[--i] >= '0' && str[i] <= '9')
 		nbr += (str[i] - '0') * ft_pow(10, j++);
 	return (nbr);
+}
+
+long long	get_time(void)
+{
+	struct timeval		time;
+	long long			time_ms;
+	static long long	base_time = 0;
+
+	if (base_time == 0)
+	{
+		gettimeofday(&time, NULL);
+		base_time = time.tv_sec * 1000LL + time.tv_usec / 1000;
+	}
+	gettimeofday(&time, NULL);
+	time_ms = time.tv_sec * 1000LL + time.tv_usec / 1000;
+	return (time_ms - base_time);
 }

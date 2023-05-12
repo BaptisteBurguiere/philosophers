@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   errors.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bburguie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/12 19:10:25 by bburguie          #+#    #+#             */
+/*   Updated: 2023/05/12 19:10:27 by bburguie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	is_valid_args(int argc, char const *argv[])
@@ -21,7 +33,8 @@ int	is_valid_args(int argc, char const *argv[])
 				return (0);
 		}
 		if ((start == i - 1 && !is_zero) || i - 1 - start > 10
-			|| (i - 1 - start == 10 && !(ft_strcmp(argv[j], UINT_MAX_STR) <= 0)))
+			|| (i - 1 - start == 10
+				&& !(ft_strcmp(argv[j], UINT_MAX_STR) <= 0)))
 			return (0);
 		j++;
 	}
