@@ -30,6 +30,17 @@ void	start_simu(t_arg *args, unsigned int nb)
 	while (*args[0].is_dead == 0)
 	{
 	}
+	i = 0;
+	while (i < nb)
+	{
+		pthread_mutex_destroy(&args->forks[i]);
+		i++;
+	}
+	free(args->forks);
+	pthread_mutex_destroy(args->term);
+	free(args->term);
+	free(args->is_dead);
+	free(args);
 }
 
 t_arg	*args_init(t_philo vars)

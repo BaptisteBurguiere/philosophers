@@ -33,8 +33,8 @@ int	is_valid_args(int argc, char const *argv[])
 				return (0);
 		}
 		if ((start == i - 1 && !is_zero) || i - 1 - start > 10
-			|| (i - 1 - start == 10
-				&& !(ft_strcmp(argv[j], UINT_MAX_STR) <= 0)))
+			|| (i - 1 - start == 10 && !(ft_strcmp(argv[j], MAX) <= 0))
+			|| ft_atoi(argv[j]) < 1)
 			return (0);
 		j++;
 	}

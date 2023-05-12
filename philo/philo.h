@@ -19,7 +19,7 @@
 # include <stdio.h>
 # include <sys/time.h>
 
-# define UINT_MAX_STR "4294967295"
+# define MAX "4294967295"
 
 typedef struct s_philo
 {
