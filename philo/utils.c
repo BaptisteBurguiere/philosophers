@@ -72,3 +72,10 @@ long long	get_time(void)
 	time_ms = time.tv_sec * 1000LL + time.tv_usec / 1000;
 	return (time_ms - base_time);
 }
+
+void	ft_print(t_arg, *arg, const char *mess)
+{
+	pthread_mutex_lock(arg->vars->term);
+	printf("%lld %u %s\n", get_time(), arg->n + 1, mess);
+	pthread_mutex_unlock(arg->vars->term);
+}
