@@ -35,7 +35,7 @@ void	*philo_ttd(void *data)
 	arg = (t_arg *) data;
 	while (!is_over(arg))
 	{
-		usleep(1000);
+		usleep(855);
 		pthread_mutex_lock(&arg->ttd_mutex.mutex);
 		arg->ttd_mutex.value -= 1;
 		if (arg->ttd_mutex.value <= 0)

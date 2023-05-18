@@ -75,5 +75,7 @@ long long	get_time(void)
 
 void	ft_print(t_arg *arg, const char *mess, long long time)
 {
+	pthread_mutex_lock(arg->vars->term);
 	printf("%lld %u %s\n", time, arg->n + 1, mess);
+	pthread_mutex_unlock(arg->vars->term);
 }

@@ -25,6 +25,7 @@ void	start_simu(t_arg *args)
 	while (i < args[0].vars->total)
 	{
 		pthread_create(&philos[i], NULL, philo_routine, &args[i]);
+		usleep(50);
 		i++;
 	}
 	i = 0;
