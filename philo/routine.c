@@ -12,87 +12,64 @@
 
 #include "philo.h"
 
+int	is_over(t_arg *arg)
+{
+	pthread_mutex_lock(&arg->vars->is_dead->mutex);
+	pthread_mutex_lock(&arg->vars->has_all_eaten->mutex);
+	if (arg->vars->is_dead->value == 1
+		|| arg->vars->has_all_eaten->value == arg->vars->total)
+	{
+		pthread_mutex_unlock(&arg->vars->has_all_eaten->mutex);
+		pthread_mutex_unlock(&arg->vars->is_dead->mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&arg->vars->has_all_eaten->mutex);
+	pthread_mutex_unlock(&arg->vars->is_dead->mutex);
+	return (0);
+}
+
 void	*philo_ttd(void *data)
 {
-	t_ttd_mutex	*ttd_mutex;
+	t_arg	*arg;
 
-	ttd_mutex = (t_ttd_mutex *) data;
-	while (1)
+	arg = (t_arg *) data;
+	while (!is_over(arg))
 	{
-		usleep(1000);
-		pthread_mutex_lock(&ttd_mutex->mutex);
-		ttd_mutex->ttd -= 1;
-		if (ttd_mutex->ttd <= 0)
+		pthread_mutex_lock(&arg->ttd_mutex.mutex);
+		if ((unsigned int) get_time() - arg->ttd_mutex.value >= arg->vars->ttd)
 		{
-			pthread_mutex_lock(ttd_mutex->term);
-			printf("%lld %u died\n", get_time(), ttd_mutex->n + 1);
-			pthread_mutex_unlock(ttd_mutex->term);
-			*ttd_mutex->is_dead = 1;
-			pthread_mutex_unlock(&ttd_mutex->mutex);
+			if (!is_over(arg))
+				ft_print(arg, "died", get_time());
+			pthread_mutex_lock(&arg->vars->is_dead->mutex);
+			arg->vars->is_dead->value = 1;
+			pthread_mutex_unlock(&arg->vars->is_dead->mutex);
+			pthread_mutex_unlock(&arg->ttd_mutex.mutex);
 			return (NULL);
 		}
-		pthread_mutex_unlock(&ttd_mutex->mutex);
+		pthread_mutex_unlock(&arg->ttd_mutex.mutex);
 	}
-}
-
-void	philo_think(pthread_mutex_t *mutex, unsigned int n)
-{
-	pthread_mutex_lock(mutex);
-	printf("%lld %u is thinking\n", get_time(), n);
-	pthread_mutex_unlock(mutex);
-}
-
-void	philo_eat(t_arg *arg, t_ttd_mutex *ttd_mutex)
-{
-	if (arg->n == 0)
-		pthread_mutex_lock(&arg->forks[arg->vars.total - 1]);
-	else
-		pthread_mutex_lock(&arg->forks[arg->n - 1]);
-	pthread_mutex_lock(arg->term);
-	printf("%lld %u has taken a fork\n", get_time(), arg->n + 1);
-	pthread_mutex_unlock(arg->term);
-	pthread_mutex_lock(&arg->forks[arg->n]);
-	pthread_mutex_lock(arg->term);
-	printf("%lld %u has taken a fork\n", get_time(), arg->n + 1);
-	printf("%lld %u is eating\n", get_time(), arg->n + 1);
-	pthread_mutex_unlock(arg->term);
-	pthread_mutex_lock(&ttd_mutex->mutex);
-	ttd_mutex->ttd = arg->vars.ttd;
-	usleep(arg->vars.tte * 1000);
-	if (arg->n == 0)
-		pthread_mutex_unlock(&arg->forks[arg->vars.total - 1]);
-	else
-		pthread_mutex_unlock(&arg->forks[arg->n - 1]);
-	pthread_mutex_unlock(&arg->forks[arg->n]);
-	pthread_mutex_unlock(&ttd_mutex->mutex);
-}
-
-void	philo_sleep(t_arg *arg)
-{
-	pthread_mutex_lock(arg->term);
-	printf("%lld %u is sleeping\n", get_time(), arg->n + 1);
-	pthread_mutex_unlock(arg->term);
-	usleep(arg->vars.tts * 1000);
+	return (NULL);
 }
 
 void	*philo_routine(void *data)
 {
-	t_arg			*arg;
-	t_ttd_mutex		ttd_mutex;
-	pthread_t		ttd_thread;
+	t_arg		*arg;
+	pthread_t	ttd_thread;
 
 	arg = (t_arg *) data;
-	pthread_mutex_init(&ttd_mutex.mutex, NULL);
-	ttd_mutex.ttd = arg->vars.ttd;
-	ttd_mutex.is_dead = arg->is_dead;
-	ttd_mutex.term = arg->term;
-	ttd_mutex.n = arg->n;
-	pthread_create(&ttd_thread, NULL, philo_ttd, &ttd_mutex);
-	while (1)
+	pthread_mutex_init(&arg->ttd_mutex.mutex, NULL);
+	arg->ttd_mutex.value = (unsigned int) get_time();
+	pthread_create(&ttd_thread, NULL, philo_ttd, arg);
+	while (!is_over(arg))
 	{
-		philo_think(arg->term, arg->n + 1);
-		philo_eat(arg, &ttd_mutex);
-		philo_sleep(arg);
+		if (!split_1(arg))
+			break ;
+		if (!split_2(arg))
+			break ;
+		if (!split_3(arg))
+			break ;
 	}
+	pthread_join(ttd_thread, NULL);
+	pthread_mutex_destroy(&arg->ttd_mutex.mutex);
 	return (NULL);
 }
